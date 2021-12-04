@@ -142,9 +142,7 @@ def create_landscape(FloorNoise=1.2, texture_dir_path=None, surface_size=None):
       'double_multiFractal', 'rocks_noise', 'slick_rock', 'planet_noise']
       
     noise_type=random.choice(noise)
-    print(noise_type)
     noise_val=random.randint(0,100)
-    print(noise_val)
     
     bpy.ops.mesh.landscape_add(ant_terrain_name="Landscape", land_material="", water_material="", texture_block="", at_cursor=False, smooth_mesh=True, \
         tri_face=False, sphere_mesh=False, subdivision_x=512, subdivision_y=512, mesh_size=2, mesh_size_x=mesh_size_x, mesh_size_y=mesh_size_y, random_seed=noise_val, \
@@ -195,13 +193,20 @@ def create_landscape(FloorNoise=1.2, texture_dir_path=None, surface_size=None):
     # bpy.context.object.modifiers["Decimate"].ratio =1
     bpy.context.object.rigid_body.collision_shape = 'MESH'
 
+def add_plants():
+    # import aquatic plants
+    plant_path="D:\\Programming\\underwater-perception\\data\\blender_data\\moss\\kkviz tillandsia usneoides_01.obj"
+    bpy.ops.import_scene.obj(filepath=plant_path)
+    # bpy.context.object.scale[0] = 0.008
+    # bpy.context.object.scale[1] = 0.008
+    # bpy.context.object.scale[2] = 0.008
 
 
         
-def add_oyster(model_dir_path=None,texture_dir_path=None, n_clusters=5, min_oyster=5, max_oyster=None, surface_size=None):
+def add_oyster(model_dir_path=None,texture_dir_path=None, n_clusters=5, min_oyster=5, max_oyster=None, x_range=5,y_range=5):
 
-    if surface_size is None:
-        surface_size = SURFACE_SIZE
+    # if surface_size is None:
+    #     surface_size = SURFACE_SIZE
     
     if model_dir_path is None or not os.path.exists(model_dir_path):
         print("MODELS NOT FOUND")
@@ -214,8 +219,8 @@ def add_oyster(model_dir_path=None,texture_dir_path=None, n_clusters=5, min_oyst
         cal_n_oysters = False
     
     # calculate cluster offset values
-    cluster_offset_x=surface_size*0.15
-    cluster_offset_y=surface_size*0.15
+    cluster_offset_x=x_range*0.05
+    cluster_offset_y=y_range*0.05
     
     # list of -1 and 1 to choose sign for cluster offset 
     signs=[-1,1,1,-1,-1,1,-1]
@@ -238,29 +243,30 @@ def add_oyster(model_dir_path=None,texture_dir_path=None, n_clusters=5, min_oyst
         cluster_mesh_names = [random.choice(mesh_names) for i in range(n_oyster)]
         
         # Set center of cluster around which oysters will be dispersed
-        cluster_center=[(random.random()*2-1)*surface_size*.50 + random.choice(signs)*cluster_offset_x,(random.random()*2-1)*surface_size*0.50+random.choice(signs)*cluster_offset_y]
+        cluster_center=[(random.random()*2-1)*x_range*.50 + random.choice(signs)*cluster_offset_x,(random.random()*2-1)*y_range*0.50+random.choice(signs)*cluster_offset_y]
         
         # Boundary condition in x axis
-        if cluster_center[0] > surface_size*0.37:
-            cluster_center[0]  = surface_size*0.37
-        elif cluster_center[0] < -surface_size*0.37:
-            cluster_center[0]  = -surface_size*0.37
+        if cluster_center[0] > x_range*0.45:
+
+            cluster_center[0]  = x_range*0.45
+        elif cluster_center[0] < -x_range*0.45:
+            cluster_center[0]  = -x_range*0.45
         
         # Boundary condition in y axis
-        if cluster_center[1] > surface_size*0.37:
-            cluster_center[1]  = surface_size*0.37
-        elif cluster_center[1] < -surface_size*0.37:
-            cluster_center[1]  = -surface_size*0.37
-        
+        if cluster_center[1] > y_range*0.45:
+            cluster_center[1]  = y_range*0.45
+        elif cluster_center[1] < -y_range*0.45:
+            cluster_center[1]  = -y_range*0.45
+        print("cluster_center:",cluster_center)
         # Variation in coordinates within a cluster
-        var_x=surface_size*0.10
-        var_y=surface_size*0.10
+        var_x=x_range*0.10
+        var_y=y_range*0.10
         
         # Z is sequentially incremented for oyster within a cluster
         z_val=0.5
 
         for mesh_name in cluster_mesh_names:
-            z_val+=.1   
+            z_val+=.05   
             oyster_file_path=model_dir_path + "\\" + mesh_name
             bpy.ops.import_mesh.stl(filepath=oyster_file_path)
             bpy.ops.object.origin_set(type='GEOMETRY_ORIGIN', center='MEDIAN')

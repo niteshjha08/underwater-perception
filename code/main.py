@@ -1,5 +1,4 @@
 import bpy
-from code.CreateScene import SURFACE_SIZE
 import numpy as np
 import os
 import sys
@@ -7,25 +6,49 @@ path = r"..//code//"
 
 if path not in sys.path:
     sys.path.append(path)
-from CreateScene import delete_objs, create_landscape, add_bluerov, add_oyster, set_camera, set_light
+from CreateScene import delete_objs, create_landscape, add_bluerov, add_oyster, set_camera, set_light, add_plants
+from utils import render_img
+def start_pipeline(frame,floor_noise,landscape_texture_dir,surface_size,oysters_model_dir,oysters_texture_dir,n_clusters,min_oyster,max_oyster,oyster_range_x,oyster_range_y,out_dir):
+    
+    TIME_TO_WAIT=150
 
-def start_pipeline(floor_noise,landscape_texture_dir,surface_size,oysters_model_dir,oysters_texture_dir,n_clusters,min_oyster,max_oyster):
+    # if output dir not present, make one
+    if not os.path.exists(out_dir):
+        os.makedirs(out_dir)
+
+    # if render output dir not present, make one
+    render_out_dir = os.path.join(out_dir, "render_output")
+    
     # Delete all objects
     delete_objs()
 
     # set point source light
-    set_light(0, 0, 30, 1000)
+    set_light(0, 0, 10, 1000)
+    
+    # set camera
+    camera,_=set_camera(0,0,2.5,0,0,0)
 
     # create a random landscape everytime
+    print("creating landscape")
     create_landscape(floor_noise, landscape_texture_dir,surface_size)
 
     # import oysters at some random location according to cluster size
-    add_oyster(oysters_model_dir,oysters_texture_dir, n_clusters, min_oyster, max_oyster)
+    add_oyster(oysters_model_dir,oysters_texture_dir, n_clusters, min_oyster, max_oyster,oyster_range_x,oyster_range_y)
+#    plant_path="D:\\Programming\\underwater-perception\\data\\blender_data\\moss\\kkviz tillandsia usneoides_01.obj"
+#    bpy.ops.import_scene.obj(filepath=plant_path)
+#    print(bpy.context.object)
 
-    # import blueROV 3d model 
-    front_cam, bottom_cam = add_bluerov(bluerov_model_path, bluerov_location)
-
-
+#    
+#    for i in range(TIME_TO_WAIT):
+#        print("waiting:",i)
+#        bpy.context.scene.frame_set(i)
+        
+    bpy.context.scene.frame_set(TIME_TO_WAIT)
+    
+    # render image
+    print("rendering frame:",frame)
+    render_img(camera,out_dir=out_dir,i=frame)
+    
 
 if __name__=="__main__":
     
@@ -34,39 +57,29 @@ if __name__=="__main__":
 
     # remove the last dir from path so that we are in base directory and can navigate further
     base_dir_path = script_path.split('code')[0]
+    
+    # output directory of saved images
+    out_dir=base_dir_path + "//data/output//"
 
     # landscape parameters
-    floor_noise = 3.5  # seabed smoothens out as the floor_noise is increased
+    floor_noise = 100  # seabed smoothens out as the floor_noise is increased
     landscape_texture_dir = base_dir_path + "//data//blender_data//landscape//textures//"
-    surface_size=80
+    surface_size=5 # camera size
 
     # oysters paramteres
     oysters_model_dir = base_dir_path + "//data//blender_data//oysters//model//"
     oysters_texture_dir = base_dir_path + "//data//blender_data//oysters//textures//"
-    n_clusters = 1
-    min_oyster = 1
-    max_oyster = None
+    n_clusters = 3
+    min_oyster = 3
+    max_oyster = 6
 
-    # blueRov parameters, initial position and orientation
-    bluerov_model_path = base_dir_path + "//data//blender_data//blueROV//BlueRov2.dae"
-    bluerov_location = (-0.85, -0.65, 7.45)
-    bluerov_orientation = (1.57, 0, 1.57)
+    # oyster dispersion range
+    oyster_range_x=2
+    oyster_range_y=1
 
-    # bluerov motion path
-    motion_path = {
-        0+TIME_TO_WAIT: [bluerov_location, bluerov_orientation],
-        80+TIME_TO_WAIT: [(bluerov_location[0]+4.5, bluerov_location[1], bluerov_location[2]),
-        (bluerov_orientation[0], bluerov_orientation[1], bluerov_orientation[2])],
-        100+TIME_TO_WAIT: [(bluerov_location[0]+5, bluerov_location[1], bluerov_location[2]),
-        (bluerov_orientation[0], bluerov_orientation[1]+0.2, bluerov_orientation[2]+1.57)],
-        180+TIME_TO_WAIT: [(bluerov_location[0]+4.5, bluerov_location[1]+2.3, bluerov_location[2]+0.7),
-        (bluerov_orientation[0], bluerov_orientation[1]+0.1, bluerov_orientation[2]+1.57)],
-        200+TIME_TO_WAIT: [(bluerov_location[0]+4, bluerov_location[1]+2.8, bluerov_location[2]+1),
-        (bluerov_orientation[0], bluerov_orientation[1]+0.1, bluerov_orientation[2]+2.8)],
-        300+TIME_TO_WAIT: [(bluerov_location[0], bluerov_location[1]+5, bluerov_location[2]),
-        (bluerov_orientation[0], bluerov_orientation[1], bluerov_orientation[2]+2.8)]
-                    }
-
-    start_pipeline(floor_noise,landscape_texture_dir,surface_size,oysters_model_dir,oysters_texture_dir,n_clusters,min_oyster,max_oyster)
+    # number of random images
+    n_images=20
+    for frame in range(n_images):
+        start_pipeline(frame,floor_noise,landscape_texture_dir,surface_size,oysters_model_dir,oysters_texture_dir,n_clusters,min_oyster,max_oyster,oyster_range_x,oyster_range_y,out_dir)
 
     print("Pipeline executed.")
