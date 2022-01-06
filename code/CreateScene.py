@@ -115,11 +115,14 @@ def delete_objs():
     # # # deletes previously generated camera
     # bpy.ops.object.delete()
 
-    
-    
     # Deselect all (if required):
     bpy.ops.object.select_all(action='DESELECT')
   
+def delete_landscape():
+    # obj=bpy.context.scene.objects['Landscape']
+    bpy.context.scene.objects["Landscape"].select_set(True)
+    bpy.ops.object.delete()
+    bpy.ops.object.select_all(action='DESELECT')
 
 def apply_texture(PassiveObject, mat):
     if PassiveObject.data.materials:
@@ -259,11 +262,11 @@ def add_oyster(model_dir_path=None,texture_dir_path=None, n_clusters=5, min_oyst
             cluster_center[1]  = -y_range*0.45
         print("cluster_center:",cluster_center)
         # Variation in coordinates within a cluster
-        var_x=x_range*0.10
-        var_y=y_range*0.10
+        var_x=x_range*0.5
+        var_y=y_range*0.5
         
         # Z is sequentially incremented for oyster within a cluster
-        z_val=0.5
+        z_val=0.3
 
         pass_idx=1
 
