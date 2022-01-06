@@ -265,6 +265,8 @@ def add_oyster(model_dir_path=None,texture_dir_path=None, n_clusters=5, min_oyst
         # Z is sequentially incremented for oyster within a cluster
         z_val=0.5
 
+        pass_idx=1
+
         for mesh_name in cluster_mesh_names:
             z_val+=.05   
             oyster_file_path=model_dir_path + "\\" + mesh_name
@@ -288,6 +290,10 @@ def add_oyster(model_dir_path=None,texture_dir_path=None, n_clusters=5, min_oyst
             rn=random.random()
             bpy.context.object.location.y=rn*var_y+cluster_center[1]       
             bpy.context.object.location.z=z_val
+            
+            # Set pass index of object for creating masks - compositing 
+            bpy.context.object.pass_index = pass_idx
+            pass_idx+=1
             
             # Applying rigit body dynamics
             bpy.ops.rigidbody.object_add(type='ACTIVE')
