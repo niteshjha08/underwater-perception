@@ -97,11 +97,11 @@ def set_camera(x=0, y=0, z=2, roll=0, pitch=0, yaw=0, track=False):
 
 # Delete all the current meshes
 def delete_objs():
-    # Select all the lights:
-    bpy.ops.object.select_by_type(type='LIGHT')
+    # # Select all the lights:
+    # bpy.ops.object.select_by_type(type='LIGHT')
 
-    # Delete all the lights:
-    bpy.ops.object.delete()
+    # # Delete all the lights:
+    # bpy.ops.object.delete()
 
     # Select all the Meshes:
     bpy.ops.object.select_by_type(type='MESH')
@@ -109,11 +109,11 @@ def delete_objs():
     # Delete all the objects
     bpy.ops.object.delete()
 
-     # selects previously generated camera 
-    bpy.ops.object.select_by_type(type='CAMERA')
+    #  # selects previously generated camera 
+    # bpy.ops.object.select_by_type(type='CAMERA')
     
-    # # deletes previously generated camera
-    bpy.ops.object.delete()
+    # # # deletes previously generated camera
+    # bpy.ops.object.delete()
 
     
     

@@ -8,7 +8,7 @@ if path not in sys.path:
     sys.path.append(path)
 from CreateScene import delete_objs, create_landscape, add_bluerov, add_oyster, set_camera, set_light, add_plants
 from utils import render_img
-def start_pipeline(frame,floor_noise,landscape_texture_dir,surface_size,oysters_model_dir,oysters_texture_dir,n_clusters,min_oyster,max_oyster,oyster_range_x,oyster_range_y,out_dir):
+def start_pipeline(n_images,floor_noise,landscape_texture_dir,surface_size,oysters_model_dir,oysters_texture_dir,n_clusters,min_oyster,max_oyster,oyster_range_x,oyster_range_y,out_dir):
     
     TIME_TO_WAIT=150
 
@@ -18,9 +18,6 @@ def start_pipeline(frame,floor_noise,landscape_texture_dir,surface_size,oysters_
 
     # if render output dir not present, make one
     render_out_dir = os.path.join(out_dir, "render_output")
-    
-    # Delete all objects
-    delete_objs()
 
     # set point source light
     set_light(0, 0, 10, 1000)
@@ -28,26 +25,23 @@ def start_pipeline(frame,floor_noise,landscape_texture_dir,surface_size,oysters_
     # set camera
     camera,_=set_camera(0,0,2.5,0,0,0)
 
-    # create a random landscape everytime
-    print("creating landscape")
-    create_landscape(floor_noise, landscape_texture_dir,surface_size)
 
-    # import oysters at some random location according to cluster size
-    add_oyster(oysters_model_dir,oysters_texture_dir, n_clusters, min_oyster, max_oyster,oyster_range_x,oyster_range_y)
-#    plant_path="D:\\Programming\\underwater-perception\\data\\blender_data\\moss\\kkviz tillandsia usneoides_01.obj"
-#    bpy.ops.import_scene.obj(filepath=plant_path)
-#    print(bpy.context.object)
+    for i in range(n_images):
+        # Delete all meshes
+        delete_objs()
 
-#    
-#    for i in range(TIME_TO_WAIT):
-#        print("waiting:",i)
-#        bpy.context.scene.frame_set(i)
-        
-    bpy.context.scene.frame_set(TIME_TO_WAIT)
+        # create a random landscape everytime
+        create_landscape(floor_noise, landscape_texture_dir,surface_size)
+
+        # import oysters at some random location according to cluster size
+        add_oyster(oysters_model_dir,oysters_texture_dir, n_clusters, min_oyster, max_oyster,oyster_range_x,oyster_range_y)
+
+        # Set scene frame
+        bpy.context.scene.frame_set(TIME_TO_WAIT)
     
-    # render image
-    print("rendering frame:",frame)
-    render_img(camera,out_dir=out_dir,i=frame)
+        # render image
+        print("rendering frame:",i)
+        render_img(camera,out_dir=out_dir,i=i)
     
 
 if __name__=="__main__":
@@ -78,8 +72,8 @@ if __name__=="__main__":
     oyster_range_y=1
 
     # number of random images
-    n_images=20
-    for frame in range(n_images):
-        start_pipeline(frame,floor_noise,landscape_texture_dir,surface_size,oysters_model_dir,oysters_texture_dir,n_clusters,min_oyster,max_oyster,oyster_range_x,oyster_range_y,out_dir)
+    n_images=2
+
+    start_pipeline(n_images,floor_noise,landscape_texture_dir,surface_size,oysters_model_dir,oysters_texture_dir,n_clusters,min_oyster,max_oyster,oyster_range_x,oyster_range_y,out_dir)
 
     print("Pipeline executed.")
