@@ -50,7 +50,6 @@ def start_pipeline(n_images,floor_noise,landscape_texture_dir,surface_size,oyste
             obj.location.y=rn
             rn=random.random()
             obj.rotation_euler.z=rn
-            
         # moss randomization separately as its origin is off from body
         moss='kkviz tillandsia usneoides_01'
         obj=bpy.context.scene.objects[moss]
@@ -71,6 +70,10 @@ def start_pipeline(n_images,floor_noise,landscape_texture_dir,surface_size,oyste
 #        bpy.context.scene.frame_set(TIME_TO_WAIT)
 #    
 #        # render image
+        TIME_TO_WAIT=20
+        for frame_count in range(TIME_TO_WAIT):
+            bpy.context.scene.frame_set(frame_count)
+    
         print("rendering frame:",i)
         render_img(camera,out_dir=out_dir,i=i)
 #    

@@ -13,6 +13,8 @@ import math
 import numpy as np
 import random
 import os
+from math import pi
+import random
 
 
 # Force Enter the Object Mode
@@ -246,7 +248,7 @@ def add_oyster(model_dir_path=None,texture_dir_path=None, n_clusters=5, min_oyst
         texture_names = []
     else:
         texture_names=os.listdir(texture_dir_path)
-
+    pass_idx=1
     for i in range(n_clusters):
         
         if cal_n_oysters:
@@ -275,9 +277,9 @@ def add_oyster(model_dir_path=None,texture_dir_path=None, n_clusters=5, min_oyst
         var_y=y_range*0.5
         
         # Z is sequentially incremented for oyster within a cluster
-        z_val=0.05
+        z_val=0.2
 
-        pass_idx=1
+        
 
         for mesh_name in cluster_mesh_names:
             # z_val+=.05   
@@ -292,9 +294,9 @@ def add_oyster(model_dir_path=None,texture_dir_path=None, n_clusters=5, min_oyst
 
             
             # Set oyster scales
-            bpy.context.object.scale[0] = 0.005
-            bpy.context.object.scale[1] = 0.005
-            bpy.context.object.scale[2] = 0.005
+            bpy.context.object.scale[0] = 0.2
+            bpy.context.object.scale[1] = 0.2
+            bpy.context.object.scale[2] = 0.2
             
             # Set oyster location in x and y randomly
             rn=random.random()
@@ -302,6 +304,11 @@ def add_oyster(model_dir_path=None,texture_dir_path=None, n_clusters=5, min_oyst
             rn=random.random()
             bpy.context.object.location.y=rn*var_y+cluster_center[1]       
             bpy.context.object.location.z=z_val
+
+            [Roll, Pitch, Yaw] = [(random.randint(-180, 180)) * pi / 180 for x in range(3)]
+            bpy.ops.transform.rotate(value=Roll, orient_axis='X')
+            bpy.ops.transform.rotate(value=Pitch, orient_axis='Y')
+            bpy.ops.transform.rotate(value=Yaw, orient_axis='Z')
             
             # Set pass index of object for creating masks - compositing 
             bpy.context.object.pass_index = pass_idx
@@ -311,6 +318,8 @@ def add_oyster(model_dir_path=None,texture_dir_path=None, n_clusters=5, min_oyst
             bpy.ops.rigidbody.object_add(type='ACTIVE')
             # Set mass
             bpy.context.object.rigid_body.mass = 10
+            # bpy.context.object.rigid_body.collision_shape = 'MESH'
+
             
             # Apply texture and Smart UV project
             current_Object = bpy.context.view_layer.objects.active
