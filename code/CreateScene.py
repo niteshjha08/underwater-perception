@@ -78,6 +78,7 @@ def set_light(x=0,y=0,z=60,energy=50000):
     bpy.ops.object.light_add(type='POINT', radius=1, align='WORLD', location=(x,y,z), scale=(1, 1, 1))
     # bpy.context.space_data.context = 'DATA'
     bpy.context.object.data.energy = energy
+    bpy.ops.object.select_all(action='DESELECT')
 
 
 
@@ -122,6 +123,14 @@ def delete_landscape():
     # obj=bpy.context.scene.objects['Landscape']
     bpy.context.scene.objects["Landscape"].select_set(True)
     bpy.ops.object.delete()
+    bpy.ops.object.select_all(action='DESELECT')
+
+def delete_oysters():
+#    objs = [obj for obj in bpy.context.scene.objects if obj.name.startswith("oyster")]
+    for obj in bpy.context.scene.objects:
+        if obj.name.startswith("oyster"):
+            obj.select_set(True)
+            bpy.ops.object.delete()
     bpy.ops.object.select_all(action='DESELECT')
 
 def apply_texture(PassiveObject, mat):
@@ -266,12 +275,12 @@ def add_oyster(model_dir_path=None,texture_dir_path=None, n_clusters=5, min_oyst
         var_y=y_range*0.5
         
         # Z is sequentially incremented for oyster within a cluster
-        z_val=0.3
+        z_val=0.05
 
         pass_idx=1
 
         for mesh_name in cluster_mesh_names:
-            z_val+=.05   
+            # z_val+=.05   
             oyster_file_path=model_dir_path + "\\" + mesh_name
             bpy.ops.import_mesh.stl(filepath=oyster_file_path)
             bpy.ops.object.origin_set(type='GEOMETRY_ORIGIN', center='MEDIAN')

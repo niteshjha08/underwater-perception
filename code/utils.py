@@ -1,7 +1,7 @@
 import bpy
 
 def render_img(camera,out_dir,i):
-    bpy.data.cameras[camera].dof.use_dof = False
+    # bpy.data.cameras[camera].dof.use_dof = False
     bpy.context.scene.camera = bpy.data.objects[camera]
 
     save_path = out_dir+"//"+str(i)+'.png'
