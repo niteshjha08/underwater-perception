@@ -6,7 +6,7 @@ def render_img(camera,out_dir,i):
 
     save_path = out_dir+"//"+str(i)+'.png'
     r = bpy.context.scene.render
-    r.resolution_x = 640
-    r.resolution_y = 480
+    r.resolution_x = 1080
+    r.resolution_y = 810
     r.filepath=save_path
     bpy.ops.render.render(write_still=True)

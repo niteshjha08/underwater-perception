@@ -27,6 +27,8 @@ def start_pipeline(n_images,floor_noise,landscape_texture_dir,surface_size,oyste
     # set camera
 #    camera,_=set_camera(0,0,2.5,0,0,0)
     camera="Camera"
+    bpy.context.scene.render.engine = 'CYCLES'
+    bpy.context.scene.cycles.device = 'GPU'
     
     seabed_objects=['Landscape.002','Landscape.003','Landscape.010','usnm_148-150k','usnm_81450-150k','usnm_1137708-150k']
     for i in range(n_images):
